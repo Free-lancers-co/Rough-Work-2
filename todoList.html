@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=0.5">
+  <meta charset="utf-8">
+  <title>TO DO LIST</title>
+  <style type="text/css">
+*{box-sizing: border-box;}
+body{background-color: #ffaaff;
+}
+
+.content {
+  margin: auto;
+  min-width: 250px;
+  max-width: 90%;
+}
+h1{font-size: 5vw;
+}
+
+
+/*Style the header*/
+.header{ background-color: #330033;
+  padding: 10px;
+  color: white;
+  text-align: center;
+}
+.header h1{text-shadow: 0px 0px 10px white;
+}
+
+button{float: left;
+  padding: 10px;
+    width: 25%;
+  background: #d9d9d9;
+  color: #555;
+  cursor: pointer;
+  transition: 0.3s;
+  border: none;
+  border-radius:3px;
+  font-size: 16px;
+  margin: 10px;
+}
+button:hover{font-weight: bold;
+  background-color: #bbb;
+}
+
+/* Clear floats after the header */
+.header:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+input {
+  margin: 0;
+  border: none;
+  width: 75%;
+  padding: 10px;
+  float: left;
+  font-size: 16px;
+  border-radius: 3px 0px 0px 3px;
+}
+
+input:focus{outline: none;
+  box-shadow: 0px 0px 20px white;
+}
+
+.Addbtn{ padding: 10px;
+  font-weight: bold;
+  width: 25%;
+  background: #d9d9d9;
+  color: #555;
+  float: left;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  border-radius: 0px 3px 3px 0px;
+}
+
+.Addbtn:hover{background-color: #bbb;
+  box-shadow: 0px 0px 5px black;
+}
+
+ul li{position: relative;
+  list-style-type: rectangle;
+  list-style-position: outside;
+  padding: 12px 8px 12px 40px;
+  cursor: pointer;
+  background: #eee;
+  background:  #ecf9ec;
+  font-size: 16px;
+}
+ul li:hover{background-color:  #ffccff;}
+ul{margin: 0;
+  padding: 0;
+}
+
+/* Add a  mark when selected on */
+ul li.checked::before {
+  content: ' ';
+  position: absolute;
+  border-color: #fff;
+  border-style: solid;
+  border-width: 0 2px 2px 0;
+  top: 10px;
+  left: 16px;
+  transform: rotate(45deg);
+  height: 15px;
+  width: 7px;
+  border-radius: 0px 0px 5px 0px;
+}
+
+ul li.checked {
+  background:   #660066;
+  color: #fff;
+  text-decoration: line-through;
+}
+
+.close {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 12px 16px 12px 16px;
+}
+
+.close:hover {
+  background-color: #330033;
+  color:  red;
+  transition: 1s;
+}
+
+@media screen and (max-width: 500px) {
+  li{padding: 9px 5px 9px 20px;
+  }
+  .content{max-width: 97%;
+  }
+}
+
+</style>
+</head>
+<body>
+  <div class="content">
+<div class="header">
+<h1>MY  TO-DO  LIST </h1>
+
+
+</div>
+
+
+<ul id="listElements">
+
+
+</ul>
+
+<div class="header">
+  <button onclick="sortList()" title="Sort the list alphabetically">Sort List</button>
+
+
+<input type="text" name="input" placeholder="Input task..." id="MyInput">
+<div class="Addbtn" onclick="renderApp()" title="Add new item to the list">Add</div>
+
+</div>
+</div>
+
+<script>
+  let allItems=[]
+function sortList() {
+  var list, i, switching, b, shouldSwitch;
+  list = document.getElementById("listElements");
+  switching = true;
+  /* Make a loop that will continue until
+  no swizxtching has been done: */
+  while (switching) {
+    // start by saying: no switching is done:
+    switching = false;
+    b = list.getElementsByTagName("LI");
+    // Loop through all list-items:
+    for (i = 0; i < (b.length - 1); i++) {
+      // start by saying there should be no switching:
+      shouldSwitch = false;
+      /* check if the next item should
+      switch place with the current item: */
+      if (b[i].innerHTML.toLowerCase() > b[i + 1].innerHTML.toLowerCase()) {
+        /* if next item is alphabetically
+        lower than current item, mark as a switch
+        and break the loop: */
+        shouldSwitch = true;
+        break;
+      }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark the switch as done: */
+      b[i].parentNode.insertBefore(b[i + 1], b[i]);
+      switching = true;
+    }
+  }
+}
+
+function toggleDone(key) {
+  const index = TodoItems.findIndex(item => item.id === Number(key));
+  TodoItems[index].checked = !TodoItems[index].checked;
+  renderTodo(TodoItems[index]);
+}
+
+
+function checkedList(){
+// Add a "checked" symbol when clicking on a list item
+var list = document.querySelector('ul');
+list.addEventListener('click', 
+	function(event) {
+  if (event.target.tagName === 'LI') 
+  {
+    keyValue=event.target.dataset.key;
+    let index = allItems.findIndex(item => item.id === Number(keyValue));
+     event.target.classList.toggle('checked');
+     /*changing the class checked */
+  allItems[index].checked = !allItems[index].checked;
+    /*updating the dataset attribute checked to switching*/
+    localStorage.setItem('ItemReference', JSON.stringify(allItems));
+  }
+    });
+}
+
+
+ //Append the input content into the list item
+function renderApp() {
+  var input = document.getElementById("MyInput").value;
+  item={text:input.trim(),id:Date.now(),checked:false}
+  allItems.push(item)
+  appendData(item)
+  localStorage.setItem('ItemReference', JSON.stringify(allItems));
+}
+
+
+function appendData(item) {
+ let input=item.text;
+ var li = document.createElement("li");
+ li.setAttribute('data-key',item.id);
+ var textnode = document.createTextNode(input);
+ li.appendChild(textnode);
+  if (input === '') {alert("You must write something!");}
+  else {document.getElementById("listElements").appendChild(li)}
+
+  document.getElementById("MyInput").value='';
+  addCancel()
+  }
+
+ 
+ function addCancel(argument) {
+  var allItemsElement = document.getElementsByTagName("LI");
+var i;
+for (i = 0; i < allItemsElement.length; i++) {
+  var span = document.createElement("SPAN");
+  var txt = document.createTextNode("✖");
+  span.className = "close";
+  span.onclick = function() {
+  keyValue=this.parentElement.dataset.key
+  this.parentElement.remove();
+  allItems=allItems.filter(function(item){
+  	return item.id !=Number(keyValue);
+  	 
+  })
+  
+  localStorage.setItem('ItemReference', JSON.stringify(allItems))
+}
+  span.appendChild(txt);
+  keyValue=allItemsElement[i].getAttribute('data-key');
+  
+    let index = allItems.findIndex(item => item.id === Number(keyValue));
+ 
+if(allItems[index].checked==true){
+	allItemsElement[i].classList.add('checked')}
+	allItemsElement[i].appendChild(span);}
+	checkedList()
+}
+
+
+/*getting the previous data when the page reload*/
+document.addEventListener('DOMContentLoaded', () => {
+  const ref = localStorage.getItem('ItemReference');
+  if (ref) {
+    todoItems = JSON.parse(ref);
+    allItems=todoItems.filter(function(item){
+    	return item.text!=''});
+    allItems.forEach(t => {appendData(t);})
+     }});
+
+</script>
+</body>
+</html>
